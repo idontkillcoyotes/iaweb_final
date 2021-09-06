@@ -1,8 +1,12 @@
 {
-  "name": "Proyecto final IAWeb",
+  "name": "iaweb_final",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Steering behaviours phaser3",
+  "main": "src/index.js",
+  "dependencies": {
+    "phaser": "^3.55.2"
+  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,13 +14,10 @@
     "type": "git",
     "url": "git+https://github.com/idontkillcoyotes/iaweb_final.git"
   },
-  "author": "Rodrigo Diaz Figueroa",
+  "author": "Rodrigo Díaz Figueroa",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/idontkillcoyotes/iaweb_final/issues"
   },
-  "homepage": "https://github.com/idontkillcoyotes/iaweb_final#readme",
-  "dependencies": {
-    "http-server": "^0.12.3"
-  }
+  "homepage": "https://github.com/idontkillcoyotes/iaweb_final#readme"
 }
