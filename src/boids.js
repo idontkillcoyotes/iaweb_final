@@ -1,3 +1,5 @@
+//import { Phaser } from './phaser/phaser.min.js';
+
 export class Boids extends Phaser.Scene {
 
     constructor() {

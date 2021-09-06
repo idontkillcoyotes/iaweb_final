@@ -1,6 +1,8 @@
-export class Game extends Phaser.Scene {
+//import { Phaser } from './phaser/phaser.min.js';
+
+export class Test extends Phaser.Scene {
     constructor() {
-        super({ key: 'game' });
+        super({ key: 'test' });
     }
 
     preload() {
