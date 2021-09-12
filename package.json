@@ -1,23 +1,17 @@
 {
-  "name": "iaweb_final",
+  "name": "phaser-parcel-template",
   "version": "1.0.0",
-  "description": "Steering behaviours phaser3",
-  "main": "src/index.js",
+  "scripts": {
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html --public-url \".\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^2.0.0-rc.0"
+  },
   "dependencies": {
     "phaser": "^3.55.2"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/idontkillcoyotes/iaweb_final.git"
-  },
-  "author": "Rodrigo Díaz Figueroa",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/idontkillcoyotes/iaweb_final/issues"
-  },
-  "homepage": "https://github.com/idontkillcoyotes/iaweb_final#readme"
+  }
 }

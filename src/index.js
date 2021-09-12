@@ -1,17 +1,36 @@
-//import { Phaser } from './phaser/phaser.min.js';
-import { Test } from './test.js';
-import { Boids } from './boids.js';
+import Phaser from "phaser";
+
+import MainScene from "./scenes/main.scene";
+import Arrive from "./scenes/arrive";
 
 
-const config = {
+const width = 1280;
+const height = 720;
+
+const game = new Phaser.Game({
     type: Phaser.AUTO,
-    parent: 'game',
-    width: 800,
-    height: 600,
-    scene:[Test],
+    width: width,
+    height: height,
+    render: {
+        pixelArt: true
+    },
     physics: {
-        default: 'arcade'
-    },    
-}
-
-var game = new Phaser.Game(config);
+        default: "arcade",
+        arcade: {
+            enableSleeping: true,
+            gravity: {
+                y: 0
+            }
+            //debug: true
+        }
+    },
+    parent: "game-container",
+    scene: [
+        Arrive
+    ],
+    scale: {
+        
+        mode: Phaser.Scale.RESIZE,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    }
+});
