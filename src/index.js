@@ -1,7 +1,5 @@
 import Phaser from "phaser";
-
-import MainScene from "./scenes/main.scene";
-import Arrive from "./scenes/arrive";
+import MainScene from "./scenes/main";
 
 
 const width = 1280;
@@ -26,7 +24,7 @@ const game = new Phaser.Game({
     },
     parent: "game-container",
     scene: [
-        Arrive
+        MainScene
     ],
     scale: {
         
