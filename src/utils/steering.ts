@@ -1,36 +1,39 @@
 
 import {Math} from "phaser";
+import { Boid } from "~/scenes/boid";
 
 
-export function SBSeek(position:Math.Vector2,target:Math.Vector2,velocity:Math.Vector2,maxSpeed:number): Math.Vector2 {
+export function SBSeek(boid:Boid,target:Boid): Math.Vector2 {
     let desiredVelocity = new Math.Vector2(
-            target.x - position.x,
-            target.y - position.y
-    );
-        
-    let distance = desiredVelocity.length();
-        
-    desiredVelocity = desiredVelocity.normalize()
-    desiredVelocity = desiredVelocity.setLength(maxSpeed);
+            target.x - boid.x,
+            target.y - boid.y
+    )
+    
+    let maxSpeed = boid.getMaxSpeed()
+    let velocity = boid.getVelocity()
+
+    desiredVelocity = desiredVelocity.normalize().setLength(maxSpeed);
    
     let steering = new Math.Vector2(
         desiredVelocity.x - velocity.x,
         desiredVelocity.y - velocity.y
-    );
+    )
         
-    return steering;
+    return steering
 }
 
-export function SBArrive(position:Math.Vector2,target:Math.Vector2,velocity:Math.Vector2,maxSpeed:number,slowRadius:number): Math.Vector2 {
+export function SBArrive(boid:Boid,target:Boid): Math.Vector2 {
     let desiredVelocity = new Math.Vector2(
-            target.x - position.x,
-            target.y - position.y
-    );
+            target.x - boid.x,
+            target.y - boid.y
+    )
         
-    let distance = desiredVelocity.length();
+    let distance= desiredVelocity.length()
+    let velocity = boid.getVelocity()
+    let maxSpeed = boid.getMaxSpeed()
+    let slowRadius = boid.getSlowDistance()
         
-    desiredVelocity = desiredVelocity.normalize()
-    desiredVelocity = desiredVelocity.setLength(maxSpeed);
+    desiredVelocity = desiredVelocity.normalize().setLength(maxSpeed);
 
     if (distance < slowRadius){        
         desiredVelocity = desiredVelocity.scale(distance/slowRadius);
@@ -39,19 +42,22 @@ export function SBArrive(position:Math.Vector2,target:Math.Vector2,velocity:Math
     let steering = new Math.Vector2(
         desiredVelocity.x - velocity.x,
         desiredVelocity.y - velocity.y
-    );
+    )
         
-    return steering;
+    return steering
 }
 
-export function SBFlee(position:Math.Vector2,target:Math.Vector2,velocity:Math.Vector2,maxSpeed:number,farDistance:number): Math.Vector2 {
+export function SBFlee(boid:Boid,target:Boid): Math.Vector2 {
     let desiredVelocity = new Math.Vector2(
-            position.x - target.x,
-            position.y - target.y
+        boid.x - target.x,
+        boid.y - target.y
     )
         
     let distance = desiredVelocity.length()
-    
+    let farDistance = boid.getFarDistance()
+    let velocity = boid.getVelocity()
+    let maxSpeed = boid.getMaxSpeed()
+        
     if (distance < farDistance){        
         desiredVelocity = desiredVelocity.normalize()
         desiredVelocity = desiredVelocity.setLength(maxSpeed)
@@ -67,24 +73,60 @@ export function SBFlee(position:Math.Vector2,target:Math.Vector2,velocity:Math.V
     return steering
 }
 
-export function SBPursuit(position:Math.Vector2,target:Math.Vector2,velocity:Math.Vector2,targetVel:Math.Vector2,maxSpeed:number): Math.Vector2 {
+export function SBPursuit(boid:Boid,target:Boid): Math.Vector2 {
 
-    let distance = position.distance(target)
+    let targetPos = target.getPosition()
+    let targetVel = target.getVelocity()
+
+    let distance = boid.getPosition().distance(targetPos)
     
-    let t = distance / maxSpeed
+    let maxSpeed = boid.getMaxSpeed()
+    let velocity = boid.getVelocity()
+    
+    let t = distance / target.getMaxSpeed()
 
-    let futurePosition = target.add(targetVel.scale(t))
+    let futurePosition = targetPos.add(targetVel.scale(t))
 
-    return SBSeek(position,futurePosition,velocity,maxSpeed)
+    let desiredVelocity = new Math.Vector2(
+            futurePosition.x - boid.x,
+            futurePosition.y - boid.y
+    )   
+
+    desiredVelocity = desiredVelocity.normalize().setLength(maxSpeed);
+   
+    let steering = new Math.Vector2(
+        desiredVelocity.x - velocity.x,
+        desiredVelocity.y - velocity.y
+    )
+
+    return steering
 }
 
-export function SBEvade(position:Math.Vector2,target:Math.Vector2,velocity:Math.Vector2,targetVel:Math.Vector2,maxSpeed:number,farDistance:number): Math.Vector2 {
+export function SBEvade(boid:Boid,target:Boid): Math.Vector2 {
 
-    let distance = position.distance(target)
+    let targetPos = target.getPosition()
+    let targetVel = target.getVelocity()
+
+    let distance = boid.getPosition().distance(targetPos)
     
+    let maxSpeed = boid.getMaxSpeed()
+    let velocity = boid.getVelocity()
     let t = distance / maxSpeed
 
-    let futurePosition = target.add(targetVel.scale(t))
+    let futurePosition = targetPos.add(targetVel.scale(t))
 
-    return SBFlee(position,futurePosition,velocity,maxSpeed,farDistance)
+
+    let desiredVelocity = new Math.Vector2(
+            boid.x - futurePosition.x,
+            boid.y - futurePosition.y
+    )   
+
+    desiredVelocity = desiredVelocity.normalize().setLength(maxSpeed);
+   
+    let steering = new Math.Vector2(
+        desiredVelocity.x - velocity.x,
+        desiredVelocity.y - velocity.y
+    )
+
+    return steering
 }

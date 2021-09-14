@@ -5,23 +5,12 @@ import { SBArrive,SBEvade,SBFlee,SBPursuit,SBSeek } from "../utils/steering"
 import * as BoidImage from "../assets/boid.png"
 import * as TargetImage from "../assets/target.png"
 
-enum MODES{
-    SEEK = 0,
-    FLEE = 1,
-    ARRIVE = 2,
-    PURSUIT = 3,
-    EVADE = 4
-}
+import { SteeringMode,Boid } from "./boid"
 
 export default class MainScene extends Phaser.Scene {
 
-    private currentMode: MODES = MODES.ARRIVE
-    private maxSpeed: number = 450
-    private slowDistance: number = 200
-    private farDistance: number = 300
-
-    private target!:Phaser.GameObjects.Image
-    private boid!:Phaser.Types.Physics.Arcade.ImageWithDynamicBody
+    private target!:Boid
+    private boids:Boid[] = []
 
     constructor() {
         super("World");
@@ -35,12 +24,33 @@ export default class MainScene extends Phaser.Scene {
 
     create() {
 
-        this.target = this.add.image(0,0,"target")
+        this.target = new Boid(this,0,0,"target")
         this.target.setRandomPosition()
                 
-        this.boid = this.physics.add.image(this.scale.width/2,this.scale.height/2,"boid")
-        this.boid.setVelocity(0,0)
-        this.boid.body.setAllowRotation(false)
+        for (let index = 0; index < 10; index++) {
+            const b = new Boid(
+                this,
+                Phaser.Math.Between(200,400),
+                Phaser.Math.Between(200,400),
+                "boid"
+            )
+            this.boids.push(b)
+            b.setMode(SteeringMode.ARRIVE)
+            b.setTarget(this.target)
+
+            if (index>0){
+                b.setTarget(this.boids[index-1])
+            }
+            
+        }
+      
+
+        var group = this.physics.add.group(this.boids,{
+            classType:Boid,
+            enable: true
+        })
+
+        this.physics.add.collider(group,group)
 
     }
 
@@ -50,44 +60,10 @@ export default class MainScene extends Phaser.Scene {
             this.target.setPosition(this.input.activePointer.x,this.input.activePointer.y)
         }
 
-        let boidPos = this.boid.body.position
-        let targetPos = new Math.Vector2(this.target.x - this.target.width/2 ,this.target.y - this.target.height/2)
-
-
-        var steering!:Math.Vector2
-
-        switch (this.currentMode){
-            case MODES.SEEK:{
-                steering = SBSeek(boidPos,targetPos,this.boid.body.velocity,this.maxSpeed)
-                break
-            }
-            case MODES.FLEE:{
-                steering = SBFlee(boidPos,targetPos,this.boid.body.velocity,this.maxSpeed,this.farDistance)
-                break
-            }
-            case MODES.ARRIVE:{
-                steering = SBArrive(boidPos,targetPos,this.boid.body.velocity,this.maxSpeed,this.slowDistance)
-                break
-            }   
-            case MODES.PURSUIT:{
-                steering = SBPursuit(boidPos,targetPos,this.boid.body.velocity,Math.Vector2.ZERO,this.maxSpeed)
-                break
-            }
-            case MODES.EVADE:{
-                steering = SBEvade(boidPos,targetPos,this.boid.body.velocity,Math.Vector2.ZERO,this.maxSpeed,this.farDistance)
-                break
-            }
-        }
+        this.boids.forEach(element => {
+            element.update(time,delta)    
+        });
         
-        let newVelocity = new Math.Vector2(
-            this.boid.body.velocity.x + steering.x,
-            this.boid.body.velocity.y + steering.y,
-        )
-        
-        this.boid.setVelocity(newVelocity.x,newVelocity.y)
-
-        if (!this.boid.body.velocity.fuzzyEquals(Math.Vector2.ZERO))
-            this.boid.setRotation(this.boid.body.velocity.angle())
         
     }
 
