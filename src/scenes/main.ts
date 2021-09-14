@@ -1,7 +1,9 @@
+
 import Phaser from "phaser"
 import { Math } from "phaser"
 import { SBArrive,SBEvade,SBFlee,SBPursuit,SBSeek } from "../utils/steering"
-
+import * as BoidImage from "../assets/boid.png"
+import * as TargetImage from "../assets/target.png"
 
 enum MODES{
     SEEK = 0,
@@ -26,26 +28,26 @@ export default class MainScene extends Phaser.Scene {
     }
 
     preload() {
-
-        this.load.image("boid","/src/assets/target.png");
-        this.load.image("target","/src/assets/target.png");
+        this.load.setBaseURL("assets")
+        this.load.image("boid",BoidImage)
+        this.load.image("target",TargetImage)
     }
 
     create() {
 
-        this.target = this.add.image(0,0,"target");
-        this.target.setRandomPosition();
+        this.target = this.add.image(0,0,"target")
+        this.target.setRandomPosition()
                 
-        this.boid = this.physics.add.image(this.scale.width/2,this.scale.height/2,"boid");
-        this.boid.setVelocity(0,0);
-        this.boid.body.setAllowRotation(false);
+        this.boid = this.physics.add.image(this.scale.width/2,this.scale.height/2,"boid")
+        this.boid.setVelocity(0,0)
+        this.boid.body.setAllowRotation(false)
 
     }
 
     update(time, delta) {
         
         if (this.input.activePointer.isDown) {
-            this.target.setPosition(this.input.activePointer.x,this.input.activePointer.y);
+            this.target.setPosition(this.input.activePointer.x,this.input.activePointer.y)
         }
 
         let boidPos = this.boid.body.position
@@ -82,22 +84,11 @@ export default class MainScene extends Phaser.Scene {
             this.boid.body.velocity.y + steering.y,
         )
         
-        this.boid.setVelocity(newVelocity.x,newVelocity.y);
+        this.boid.setVelocity(newVelocity.x,newVelocity.y)
 
         if (!this.boid.body.velocity.fuzzyEquals(Math.Vector2.ZERO))
-            this.boid.setRotation(this.boid.body.velocity.angle());
+            this.boid.setRotation(this.boid.body.velocity.angle())
         
     }
 
 }
-
-/*
-desiredVelocity = targetPosition - position;
-float distance = desiredVelocity.magnitude;
-if (distance < SlowingDistance)
-    desiredVelocity = Normalize(desiredVelocity) * MaxVelocity * (distance / SlowingDistance);
-else
-    desiredVelocity = Normalize(desiredVelocity) * MaxVelocity;
-Vector3 steering = desiredVelocity - currentVelocity;
-return steering; 
-*/
