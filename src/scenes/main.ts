@@ -27,7 +27,7 @@ export default class MainScene extends Phaser.Scene {
         this.target = new Boid(this,0,0,"target")
         this.target.setRandomPosition()
                 
-        for (let index = 0; index < 10; index++) {
+        for (let index = 0; index < 35; index++) {
             const b = new Boid(
                 this,
                 Phaser.Math.Between(200,400),
@@ -35,7 +35,7 @@ export default class MainScene extends Phaser.Scene {
                 "boid"
             )
             this.boids.push(b)
-            b.setMode(SteeringMode.ARRIVE)
+            b.setMode(SteeringMode.FLOCK)
             b.setTarget(this.target)
 
             if (index>0){

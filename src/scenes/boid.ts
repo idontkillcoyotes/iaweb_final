@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { SBSeek,SBArrive,SBEvade,SBFlee,SBPursuit } from "../utils/steering";
+import { SBSeek,SBArrive,SBEvade,SBFlee,SBPursuit, SBAligment, SBCohesion, SBSeparation } from "../utils/steering";
 
 export enum SteeringMode{
     IDLE = 0,
@@ -7,7 +7,8 @@ export enum SteeringMode{
     FLEE = 2,
     ARRIVE = 3,
     PURSUIT = 4,
-    EVADE = 5
+    EVADE = 5,
+    FLOCK = 6
 }
 
 export class Boid extends Phaser.Physics.Arcade.Image{
@@ -86,15 +87,15 @@ export class Boid extends Phaser.Physics.Arcade.Image{
 
             switch (this.currentMode){
                 case SteeringMode.SEEK:{
-                    steering = SBSeek(this,this.target)
+                    steering = SBSeek(this,this.target.getPosition())
                     break
                 }
                 case SteeringMode.FLEE:{
-                    steering = SBFlee(this,this.target)
+                    steering = SBFlee(this,this.target.getPosition())
                     break
                 }
                 case SteeringMode.ARRIVE:{
-                    steering = SBArrive(this,this.target)
+                    steering = SBArrive(this,this.target.getPosition())
                     break
                 }   
                 case SteeringMode.PURSUIT:{
@@ -103,6 +104,23 @@ export class Boid extends Phaser.Physics.Arcade.Image{
                 }
                 case SteeringMode.EVADE:{
                     steering = SBEvade(this,this.target)
+                    break
+                }
+                case SteeringMode.FLOCK:{
+                    let radius = 3000
+                    let neigh = this.scene.physics.overlapCirc(this.x,this.y,radius,true,false)
+
+                    let align = SBAligment(this,neigh).scale(1.0)
+                    let cohes = SBCohesion(this,neigh).scale(1.0)
+                    let separ = SBSeparation(this,neigh,300).scale(1.0)
+
+                    steering = new Phaser.Math.Vector2(
+                        align.x+cohes.x+separ.x,
+                        align.y+cohes.y+separ.y
+                    )
+
+                    steering = steering.add(SBSeek(this,this.target.getPosition())).normalize()
+
                     break
                 }
                 default:{
