@@ -1,5 +1,7 @@
+import { Vector } from "matter";
 import Phaser from "phaser";
-import { SBSeek,SBArrive,SBEvade,SBFlee,SBPursuit, SBAligment, SBCohesion, SBSeparation } from "../utils/steering";
+import Steering from "../utils/steering";
+import MainScene from "./baseScene";
 
 export enum SteeringMode{
     IDLE = 0,
@@ -8,17 +10,21 @@ export enum SteeringMode{
     ARRIVE = 3,
     PURSUIT = 4,
     EVADE = 5,
-    FLOCK = 6
+    FOLLOWLEADER = 6,
+    FLOCK = 7,
+    AVOIDCOLLISION = 8
 }
 
 export class Boid extends Phaser.Physics.Arcade.Image{
 
     private currentMode: SteeringMode = SteeringMode.IDLE
-    private maxSpeed: number = 450
-    private slowDistance: number = 200
-    private farDistance: number = 300
+    private maxSpeed: number = 400
+    private slowDistance: number = 100
+    private farDistance: number = 400
+    private sightRadius: number = 6000
 
-    private target!: Boid;
+    public target!: Boid
+    public obstacles!: Boid[]
 
     constructor(scene: Phaser.Scene,x:number,y:number,tex:string){
         super(scene,x,y,tex)
@@ -28,24 +34,48 @@ export class Boid extends Phaser.Physics.Arcade.Image{
         this.enableBody(true,x,y,true,true)
 
         this.setVelocity(0,0)
+
+        this.setCircle(this.width/2)        
+
+    }
+
+    getScene(){
+        return this.scene
+    }
+
+    setObstacles(obs){
+        this.obstacles = obs
+    }
+
+    getRadius(){
+        return this.body.radius
     }
 
     /*
     * Returns the velocity of this boid's body
     */
     getVelocity():Phaser.Math.Vector2{
-        return this.body.velocity
+
+        if (this.body.velocity.fuzzyEquals(Phaser.Math.Vector2.ZERO,0.01)){
+            return new Phaser.Math.Vector2(0,0);
+        }
+        else{
+            return this.body.velocity.clone();
+        }
     }
 
     /*
     * Returns this boid's position
     */
     getPosition():Phaser.Math.Vector2{
-        return new Phaser.Math.Vector2(this.x,this.y)
+        return new Phaser.Math.Vector2(
+            this.body.x + this.body.radius,
+            this.body.y + this.body.radius
+        );
     }
 
     getMaxSpeed():number{
-        return this.maxSpeed
+        return this.maxSpeed;
     }
 
     getSlowDistance():number{
@@ -80,63 +110,83 @@ export class Boid extends Phaser.Physics.Arcade.Image{
         this.target=t
     }
 
+    getNeighbours(){
+        return this.scene.physics.overlapCirc(this.x,this.y,this.sightRadius,true,false)
+    }
+
     update(time:number,delta:number){
-        if (this.target){
 
-            var steering!:Phaser.Math.Vector2
+        if (this.currentMode == SteeringMode.IDLE) return
 
-            switch (this.currentMode){
-                case SteeringMode.SEEK:{
-                    steering = SBSeek(this,this.target.getPosition())
-                    break
-                }
-                case SteeringMode.FLEE:{
-                    steering = SBFlee(this,this.target.getPosition())
-                    break
-                }
-                case SteeringMode.ARRIVE:{
-                    steering = SBArrive(this,this.target.getPosition())
-                    break
-                }   
-                case SteeringMode.PURSUIT:{
-                    steering = SBPursuit(this,this.target)
-                    break
-                }
-                case SteeringMode.EVADE:{
-                    steering = SBEvade(this,this.target)
-                    break
-                }
-                case SteeringMode.FLOCK:{
-                    let radius = 3000
-                    let neigh = this.scene.physics.overlapCirc(this.x,this.y,radius,true,false)
 
-                    let align = SBAligment(this,neigh).scale(1.0)
-                    let cohes = SBCohesion(this,neigh).scale(1.0)
-                    let separ = SBSeparation(this,neigh,300).scale(1.0)
+        var steering: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0,0)
 
-                    steering = new Phaser.Math.Vector2(
-                        align.x+cohes.x+separ.x,
-                        align.y+cohes.y+separ.y
-                    )
+        switch (this.currentMode){
+            case SteeringMode.SEEK:{
+                steering = Steering.Seek(this,this.target.getPosition())
+                break
+            }
+            case SteeringMode.FLEE:{
+                steering = Steering.Flee(this,this.target.getPosition())
+                break
+            }
+            case SteeringMode.ARRIVE:{
+                steering = Steering.Arrive(this,this.target.getPosition(),this.slowDistance)
+                break
+            }   
+            case SteeringMode.PURSUIT:{
+                steering = Steering.Pursuit(this,this.target)
+                break
+            }
+            case SteeringMode.EVADE:{
+                steering = Steering.Evade(this,this.target)
+                break
+            }
+            case SteeringMode.FLOCK:{
 
-                    steering = steering.add(SBSeek(this,this.target.getPosition())).normalize()
+                let mouse = new Phaser.Math.Vector2(
+                    this.scene.input.activePointer.x,
+                    this.scene.input.activePointer.y
+                )
+                
+                steering = Steering.Seek(this,mouse)
 
-                    break
-                }
-                default:{
-                    steering = Phaser.Math.Vector2.ZERO                
-                }
+                steering = steering.add(Steering.Flocking(this,1.0,1.0,1.5,this.maxSpeed))
+
+                steering = steering.normalize()
+                break
+            }
+            case SteeringMode.FOLLOWLEADER:{
+
+                if (this.target.getVelocity().fuzzyEquals(Phaser.Math.Vector2.ZERO))
+                    steering = Phaser.Math.Vector2.ZERO;
+                else
+                    steering = Steering.FollowLeader(this,this.target,60);
+                break
+            }
+            case SteeringMode.AVOIDCOLLISION:{
+
+                steering = Steering.Arrive(this,this.target.getPosition(),this.slowDistance)
+
+                steering = steering.add(Steering.CollisionAvoidance(this,this.maxSpeed/2,this.obstacles,true))
+
+                break
             }
             
-            let newVelocity = this.body.velocity.add(steering)
-            
-            this.setVelocity(newVelocity.x,newVelocity.y)
+            default:{
+                steering = Phaser.Math.Vector2.ZERO                
+            }                   
+  
+        }
 
-            if (!this.body.velocity.fuzzyEquals(Phaser.Math.Vector2.ZERO))
-                this.setRotation(this.body.velocity.angle())
+        
+        let newVelocity = this.getVelocity().add(steering);
             
+        this.setVelocity(newVelocity.x,newVelocity.y)
+
+        if (!this.body.velocity.fuzzyEquals(Phaser.Math.Vector2.ZERO,0.01)){
+            this.setRotation(this.body.velocity.angle());       
         }
 
     }
-
 }

@@ -1,9 +1,12 @@
 import Phaser from "phaser";
-import MainScene from "./scenes/main";
+import ArriveScene from "./scenes/arriveScene";
+import SeekScene from "./scenes/seekScene";
+import FlockingScene from "./scenes/flockingScene";
+import LeaderScene from "./scenes/leaderScene";
 
 
-const width = 1280;
-const height = 720;
+const width = 1200;
+const height = 700;
 
 const game = new Phaser.Game({
     type: Phaser.AUTO,
@@ -19,12 +22,12 @@ const game = new Phaser.Game({
             gravity: {
                 y: 0
             }
-            //debug: true
+            //,debug: true
         }
     },
     parent: "game-container",
     scene: [
-        MainScene
+        FlockingScene
     ],
     scale: {
         
