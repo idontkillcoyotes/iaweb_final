@@ -2,7 +2,6 @@
   "name": "phaser3-steering-behaviours",
   "version": "1.0.0",
   "description": "An implementation of some steering behaviours using Phaser3.js",
-  "main": "index.js",
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html --public-url \".\""
@@ -24,6 +23,7 @@
     "svelte": "^3.43.0"
   },
   "dependencies": {
-    "phaser": "^3.55.2"
+    "phaser": "^3.55.2",
+    "svelte": "^3.43.0"
   }
 }
