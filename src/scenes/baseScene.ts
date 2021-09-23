@@ -16,8 +16,13 @@ export default class BaseScene extends Phaser.Scene {
     public boidGroup!: Phaser.Physics.Arcade.Group    
     public graphics!: Phaser.GameObjects.Graphics
 
-    constructor(config:string) {
-        super(config);
+    protected keyname!: string
+
+    constructor(name:string) {
+        super({
+            key: name
+        });
+        this.keyname = name
     }
     
     preload() {
@@ -32,6 +37,16 @@ export default class BaseScene extends Phaser.Scene {
         this.createTarget();    
         this.createBoids();
         this.createColliders();
+
+        this.events.on('addedtoscene', this.onAdded)
+        this.events.on('start',this.onStart)
+    }
+
+    onAdded(){
+        console.log("ADDED TO SCENE: ",this.keyname)
+    }
+    onStart(){
+        console.log("START: ",this.keyname)
     }
 
     getSceneSize():Phaser.Math.Vector2{
@@ -68,6 +83,7 @@ export default class BaseScene extends Phaser.Scene {
     createTarget(){
         this.target = new Boid(this,0,0,"target")
         this.target.setRandomPosition()
+        this.target.setTintFill(0xff0033)
     }
 
 

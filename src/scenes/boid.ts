@@ -31,12 +31,15 @@ export class Boid extends Phaser.Physics.Arcade.Image{
         scene.add.existing(this)
         scene.physics.add.existing(this)
 
+        if (tex == "boid") this.setScale(0.8)
+
+        this.setOrigin(0.5)
+        
         this.enableBody(true,x,y,true,true)
 
         this.setVelocity(0,0)
 
-        this.setCircle(this.width/2)        
-
+        this.setCircle(this.width/2)
     }
 
     getScene(){
@@ -112,7 +115,7 @@ export class Boid extends Phaser.Physics.Arcade.Image{
 
     getNeighbours(){
         return this.scene.physics.overlapCirc(this.x,this.y,this.sightRadius,true,false)
-    }
+    }    
 
     update(time:number,delta:number){
 

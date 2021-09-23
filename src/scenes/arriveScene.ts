@@ -1,6 +1,8 @@
 import BaseScene from "./baseScene";
 import { Boid, SteeringMode } from "./boid";
 
+import button from "../ui/button";
+
 export default class ArriveScene extends BaseScene{
 
     constructor(){
@@ -8,7 +10,7 @@ export default class ArriveScene extends BaseScene{
     }
 
     createBoids():void{
-
+        this.boids = []
         let size = new Phaser.Math.Vector2(
             this.scale.width/2,
             this.scale.height/2

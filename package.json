@@ -1,6 +1,7 @@
 {
-  "name": "phaser-parcel-template",
+  "name": "phaser3-steering-behaviours",
   "version": "1.0.0",
+  "description": "Implementation of some steering behaviours using phaser3",  
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html --public-url \".\""
@@ -12,6 +13,7 @@
     "parcel": "^2.0.0-rc.0"
   },
   "dependencies": {
+    "jsx-dom": "^8.0.1-beta.1",
     "phaser": "^3.55.2"
   }
 }

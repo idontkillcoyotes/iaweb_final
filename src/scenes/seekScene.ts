@@ -8,7 +8,7 @@ export default class SeekScene extends BaseScene{
     }
 
     createBoids():void{
-
+        this.boids = []
         let size = this.getSceneSize();
         var b = new Boid(this,size.x,size.y,"boid");
         b.setTarget(this.target);
