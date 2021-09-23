@@ -10,7 +10,7 @@ export default class LeaderScene extends BaseScene{
     }
 
     createBoids():void{
-
+        this.boids = []
         let size = this.getSceneSize();
 
         const leader = new Boid(this,0,0,"boid");

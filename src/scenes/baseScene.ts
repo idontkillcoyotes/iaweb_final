@@ -1,11 +1,7 @@
 
 import Phaser from "phaser"
 
-import * as BoidImage from "../assets/boid.png"
-import * as TargetImage from "../assets/target.png"
-import * as ObstacleImage from "../assets/obstacle.png"
-
-import { SteeringMode,Boid } from "./boid"
+import { Boid } from "./boid"
 
 export default class BaseScene extends Phaser.Scene {
 
@@ -27,9 +23,9 @@ export default class BaseScene extends Phaser.Scene {
     
     preload() {
         this.load.setBaseURL("assets")
-        this.load.image("boid",BoidImage)
-        this.load.image("target",TargetImage)
-        this.load.image("obstacle",ObstacleImage)
+        this.load.image("boid","boid.png")
+        this.load.image("target","target.png")
+        this.load.image("obstacle","obstacle.png")
     }
     
     create() {

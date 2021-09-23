@@ -1,7 +1,5 @@
-import { Vector } from "matter";
 import Phaser from "phaser";
 import Steering from "../utils/steering";
-import MainScene from "./baseScene";
 
 export enum SteeringMode{
     IDLE = 0,

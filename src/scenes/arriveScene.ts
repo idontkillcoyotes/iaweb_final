@@ -1,7 +1,6 @@
 import BaseScene from "./baseScene";
 import { Boid, SteeringMode } from "./boid";
 
-import button from "../ui/button";
 
 export default class ArriveScene extends BaseScene{
 

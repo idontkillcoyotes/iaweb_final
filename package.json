@@ -1,19 +1,29 @@
 {
   "name": "phaser3-steering-behaviours",
   "version": "1.0.0",
-  "description": "Implementation of some steering behaviours using phaser3",  
+  "description": "An implementation of some steering behaviours using Phaser3.js",
+  "main": "index.js",
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html --public-url \".\""
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "steering",
+    "behaviours",
+    "ai",
+    "phaser3",
+    "gameai",
+    "svelte",
+    "parcel"
+  ],
+  "author": "Rodrigo Díaz Figueroa",
   "license": "ISC",
   "devDependencies": {
-    "parcel": "^2.0.0-rc.0"
+    "parcel": "^2.0.0-rc.0",
+    "parcel-transformer-svelte": "^1.1.2",
+    "svelte": "^3.43.0"
   },
   "dependencies": {
-    "jsx-dom": "^8.0.1-beta.1",
     "phaser": "^3.55.2"
   }
 }

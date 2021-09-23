@@ -5,12 +5,13 @@ export default class FlockingScene extends BaseScene{
 
     private amount : number = 50;
 
-    constructor(amount:number){
+    constructor(pAmount:number){
         super("FlockingScene");
+        this.amount = pAmount
     }
 
     createBoids():void{
-
+        this.boids = []
         let size = this.getSceneSize();
         for (let index = 0; index < this.amount; index++) {
             const rx = Phaser.Math.FloatBetween(100,size.x-100);

@@ -1,9 +1,7 @@
 
-import {Math} from "phaser";
+import { Math } from "phaser";
 import { Boid } from "~/scenes/boid";
 import MainScene from "~/scenes/baseScene";
-import { Vector } from "matter";
-
 
 
 export default class Steering {
@@ -80,12 +78,13 @@ export default class Steering {
 
         let force = new Phaser.Geom.Line(pos.x, pos.y, pos.x + avoidance.x, pos.y + avoidance.y)
 
+        /*
         if (debug){
             (boid.scene as MainScene).graphics.clear();
             (boid.scene as MainScene).graphics.strokeLineShape(line);
             (boid.scene as MainScene).graphics.strokeLineShape(force);
         };
-    
+        */
     
         return avoidance;
     }
