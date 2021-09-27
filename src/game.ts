@@ -7,9 +7,14 @@ import ArriveScene from "./scenes/arriveScene";
 import SeekScene from "./scenes/seekScene";
 import FlockingScene from "./scenes/flockingScene";
 import LeaderScene from "./scenes/leaderScene";
+import PursuitScene from "./scenes/pursuitScene";
+import FleeScene from "./scenes/fleeScene";
+import EvadeScene from "./scenes/evadeScene";
+import WanderScene from "./scenes/wanderScene";
+import CollisionScene from "./scenes/collisionScene";
 
 export function createGame(parent,w,h,color,debuging) { 
-    console.log("CREATING GAME");
+    //console.log("CREATING GAME");
     return new Phaser.Game({
         type: Phaser.AUTO,
         width: w,
@@ -29,7 +34,9 @@ export function createGame(parent,w,h,color,debuging) {
         },
         parent: parent,
         scene: [
-            MainScene,ArriveScene,SeekScene,LeaderScene,FlockingScene
+            MainScene,ArriveScene,SeekScene,
+            LeaderScene,FlockingScene,PursuitScene,
+            FleeScene,EvadeScene,WanderScene,CollisionScene
         ],
         scale: {        
             mode: Phaser.Scale.RESIZE,
